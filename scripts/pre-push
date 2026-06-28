@@ -1,0 +1,8 @@
+#!/bin/bash
+# Global git pre-push hook — auto-switches gh CLI account based on remote URL.
+# Installed at: $(git config --global core.hooksPath)/pre-push
+
+remote_name="$1"
+remote_url="$2"
+
+bash "$HOME/.config/gh-autoswitch/gh-autoswitch.sh" "$remote_url"

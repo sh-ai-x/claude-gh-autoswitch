@@ -29,9 +29,15 @@ cp "$REPO_DIR/scripts/pre-push" "$HOOKS_DIR/pre-push"
 chmod +x "$HOOKS_DIR/pre-push"
 echo "  ✓ pre-push hook → $HOOKS_DIR/"
 
+# 3b. Global pre-commit hook (sets git author/committer to current gh account)
+cp "$REPO_DIR/scripts/pre-commit" "$HOOKS_DIR/pre-commit"
+chmod +x "$HOOKS_DIR/pre-commit"
+echo "  ✓ pre-commit hook → $HOOKS_DIR/"
+
 # 4. Register global hooks path
 git config --global core.hooksPath "$HOOKS_DIR"
 echo "  ✓ git config --global core.hooksPath $HOOKS_DIR"
 
 echo ""
 echo "Done. git push will now auto-switch gh accounts based on $CONF_DIR/accounts.conf"
+echo "      git commit will auto-set author to the current gh account."

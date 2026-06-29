@@ -1,0 +1,19 @@
+#!/bin/bash
+# Global git pre-commit hook — sets git author/committer to current gh account.
+# Ensures every commit is attributed to the user currently active in gh CLI,
+# so commit author matches the GitHub account that owns the target repo.
+
+set -e
+
+# Current gh account
+account="$(gh auth status --show-token 2>/dev/null | awk '/Active account: true/ {print $NF}' | tr -d '()')"
+[ -z "$account" ] && exit 0
+
+# Try to get the primary email from gh api
+email="$(gh api user --jq .email 2>/dev/null | head -1)"
+# Fallback: noreply email (GitHub convention: <login>@users.noreply.github.com)
+[ -z "$email" ] && email="${account}@users.noreply.github.com"
+
+# Apply as local repo config (affects current commit only)
+git config --local user.name "$account"
+git config --local user.email "$email"

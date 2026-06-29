@@ -2,12 +2,20 @@
 
 Automatically switches the active `gh` CLI account before `git push` based on the remote URL owner. No manual `gh auth switch` needed — just push.
 
+Also sets `git commit` author to the currently active `gh` account via a global pre-commit hook, so commit attribution matches the GitHub account that owns the target repo.
+
 ## How it works
 
 1. A global git `pre-push` hook fires on every `git push`
 2. It extracts the owner from the remote URL (e.g. `sh-ai-x` from `github.com/sh-ai-x/repo`)
 3. Looks up the owner in `~/.config/gh-autoswitch/accounts.conf`
 4. If the current `gh` account differs from the target, runs `gh auth switch --user <account>`
+
+A global `pre-commit` hook additionally:
+
+1. Reads the active gh account via `gh auth status`
+2. Resolves an email (tries `gh api user` first, then falls back to `<login>@users.noreply.github.com`)
+3. Applies `git config --local user.name` / `user.email` so the commit is attributed to the right account
 
 ## Install
 
@@ -50,4 +58,5 @@ Then use `/gh-switch`, `/gh-switch add <owner> <account>`, `/gh-switch remove <o
 git config --global --unset core.hooksPath
 rm -rf ~/.config/gh-autoswitch
 rm ~/.config/git/hooks/pre-push
+rm ~/.config/git/hooks/pre-commit
 ```

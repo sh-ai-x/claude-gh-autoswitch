@@ -18,10 +18,14 @@ else
   echo "  ~ accounts.conf already exists, skipping (edit manually to update)"
 fi
 
-# 2. Core script
+# 2. Core scripts
 cp "$REPO_DIR/scripts/gh-autoswitch.sh" "$CONF_DIR/gh-autoswitch.sh"
 chmod +x "$CONF_DIR/gh-autoswitch.sh"
 echo "  ✓ gh-autoswitch.sh → $CONF_DIR/"
+
+cp "$REPO_DIR/scripts/gh-autoswitch-on-start.sh" "$CONF_DIR/gh-autoswitch-on-start.sh"
+chmod +x "$CONF_DIR/gh-autoswitch-on-start.sh"
+echo "  ✓ gh-autoswitch-on-start.sh → $CONF_DIR/"
 
 # 3. Global pre-push hook
 mkdir -p "$HOOKS_DIR"
@@ -41,3 +45,9 @@ echo "  ✓ git config --global core.hooksPath $HOOKS_DIR"
 echo ""
 echo "Done. git push will now auto-switch gh accounts based on $CONF_DIR/accounts.conf"
 echo "      git commit will auto-set author to the current gh account."
+echo ""
+echo "Optional: also auto-switch when a Claude Code session starts."
+echo "Add this to ~/.claude/settings.json:"
+echo '  "hooks": {'
+echo '    "SessionStart": [{ "hooks": [{ "type": "command", "command": "bash '"$CONF_DIR"'/gh-autoswitch-on-start.sh" }] }]'
+echo '  }'

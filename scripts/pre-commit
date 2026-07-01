@@ -6,7 +6,7 @@
 set -e
 
 # Current gh account
-account="$(gh auth status --show-token 2>/dev/null | awk '/Active account: true/ {print $NF}' | tr -d '()')"
+account="$(gh auth status --show-token 2>/dev/null | awk '/Logged in/{acct=$(NF-1)} /Active account: true/{print acct; exit}')"
 [ -z "$account" ] && exit 0
 
 # Try to get the primary email from gh api

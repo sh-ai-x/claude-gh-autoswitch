@@ -39,11 +39,7 @@ if [ -z "$target_account" ]; then
 fi
 
 # Check current active account
-current_account=$(gh auth status 2>&1 | awk '/Active account: true/{found=1} found && /Logged in/{print $NF; exit}' | tr -d '()')
-# Fallback parse
-if [ -z "$current_account" ]; then
-  current_account=$(gh auth status 2>&1 | grep -A2 "Active account: true" | grep "Logged in" | awk '{print $NF}')
-fi
+current_account=$(gh auth status 2>&1 | awk '/Logged in/{acct=$(NF-1)} /Active account: true/{print acct; exit}')
 
 if [ "$current_account" = "$target_account" ]; then
   exit 0  # already on the right account
